@@ -1,0 +1,31 @@
+body {
+  margin: auto;
+  max-width: 38rem;
+  padding: 2rem;
+  background-color: #8a1538;
+  color: white;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: Hudson-NY, serif;
+  letter-spacing: 2px;
+}
+
+button {
+  font-family: Hudson-NY, serif;
+}
+
+span {
+  font-family: Gotham, serif;
+  font-size: 14px;
+}
+
+
+

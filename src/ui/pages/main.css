@@ -1,0 +1,15 @@
+.main {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: 100%;
+
+    & .main__description {
+        color: ghostwhite;
+        font-weight: 100;
+    }
+
+    & .main__functions {
+        height: 100%;
+    }
+}
