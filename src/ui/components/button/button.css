@@ -7,3 +7,8 @@
     font-family: Hudson-NY, serif;
     cursor: pointer;
 }
+
+.button__disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

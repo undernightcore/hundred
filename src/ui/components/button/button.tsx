@@ -1,5 +1,6 @@
+import clsx from "clsx";
 import React from "react";
-import './button.css'
+import "./button.css";
 
 interface ButtonProps {
   text: string;
@@ -8,5 +9,13 @@ interface ButtonProps {
 }
 
 export function Button({ text, disabled, onClick }: ButtonProps) {
-  return <button onClick={onClick} disabled={disabled} className="button">{text}</button>;
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className={clsx("button", disabled && "button__disabled")}
+    >
+      {text}
+    </button>
+  );
 }

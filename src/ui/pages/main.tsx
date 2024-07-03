@@ -1,8 +1,42 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./main.css";
 import { Button } from "../components/button/button";
 
 export function Main() {
+  const [recorder, setRecorder] = useState<MediaRecorder>();
+  const [recording, setRecording] = useState(false);
+
+  useEffect(() => {
+    getStream();
+  }, []);
+
+  async function getStream() {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: true,
+    });
+
+    const mediaRecorder = new MediaRecorder(stream, { mimeType: "audio/webm" });
+    mediaRecorder.ondataavailable = submitAudio
+
+    setRecorder(mediaRecorder);
+  }
+
+  async function submitAudio(event: BlobEvent) {
+    const audio = await event.data.arrayBuffer();
+    const data = await window.functions.prompt(audio);
+    console.log(data)
+  }
+
+  async function startRecording() {
+    recorder.start();
+    setRecording(true);
+  }
+
+  async function stopRecording() {
+    recorder.stop();
+    setRecording(false);
+  }
+
   return (
     <div className="main">
       <div className="main__info">
@@ -17,7 +51,11 @@ export function Main() {
         </h3>
         <span></span>
       </div>
-      <Button onClick={() => { console.log('a')}} text="Grabar" disabled={false} />
+      <Button
+        onClick={() => (recording ? stopRecording() : startRecording())}
+        text={recording ? "Escuchando..." : "Hablar"}
+        disabled={!recorder}
+      />
     </div>
   );
 }
