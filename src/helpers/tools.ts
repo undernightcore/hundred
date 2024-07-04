@@ -6,7 +6,7 @@ export const tools = {
   order_burgers: getHundredTool,
 };
 
-export function prepareToolPrompt(question: string) {
+export function prepareMistralToolPrompt(question: string) {
   const toolList = Object.values(tools).map(({ schema }) => schema);
   const prompt = question
     .trim()
@@ -15,8 +15,8 @@ export function prepareToolPrompt(question: string) {
   return `[AVAILABLE_TOOLS]${JSON.stringify(toolList)}[/AVAILABLE_TOOLS][INST] ${prompt} [/INST]`;
 }
 
-export function parseToolCall(text: string) {
-  const toolCall = text.replace("[TOOL_CALLS]", "").match(/\[(.*)\]/)[1];
+export function parseMistralToolCall(text: string) {
+  const toolCall = text.replace("[TOOL_CALLS]", "").match(/\{(.*)\}/)[0];
   return JSON.parse(toolCall);
 }
 

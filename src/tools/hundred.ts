@@ -1,6 +1,8 @@
 import { getBrowser } from "../services/puppeteer";
+import OpenAI from "openai";
+import ChatCompletionTool = OpenAI.ChatCompletionTool;
 
-const schema = {
+const schema: ChatCompletionTool = {
   type: "function",
   function: {
     name: "order_burgers",
@@ -8,18 +10,14 @@ const schema = {
     parameters: {
       type: "object",
       properties: {
-        name: {
-          type: "string",
-          description: "Full name of the user, e.g. Guillermo Garcia",
-        },
         address: {
           type: "string",
           description:
-            "Address of the user and the street number but do not include the door number , e.g. calle paraguas 42",
+            "Address of the user and the street number but without the door/puerta number",
         },
         doorNumber: {
           type: "number",
-          description: "The door number of the user, e.g. 3",
+          description: "The door number of the user",
         },
         burgers: {
           type: "array",
@@ -41,19 +39,17 @@ const schema = {
                   "La Madre de Stifler",
                   "Showdown",
                 ],
-                description:
-                  "Name of the burger without anymore information, e.g. Cheeseburger",
+                description: "Name of the burger without anymore information",
               },
               cookedLevel: {
                 type: "string",
                 enum: ["Poco hecha", "Al punto", "Muy hecha"],
                 description:
-                  "How cooked wants the user the burger. If not in the options choose the closest one, e.g. Al punto",
+                  "How cooked wants the user the burger. If not in the options choose the closest one",
               },
               amount: {
                 type: "number",
-                description:
-                  "Amount of burgers the user wants, at least has to be 1, e.g. 5",
+                description: "Amount of specific burgers the user wants",
               },
             },
             required: ["amount", "cookedLevel", "name"],
@@ -66,7 +62,6 @@ const schema = {
 };
 
 interface ImplementationProps {
-  name: string;
   address: string;
   doorNumber: string;
   burgers: {
@@ -143,7 +138,9 @@ const implementation = async (order: ImplementationProps) => {
       ([cooked]) => cooked === item.cookedLevel.toLowerCase(),
     );
 
-    const cooked = await page.$(`.extra-info-block:nth-child(3) input[id="${option?.[1] ?? 2}"]`);
+    const cooked = await page.$(
+      `.extra-info-block:nth-child(3) input[id="${option?.[1] ?? 2}"]`,
+    );
     await cooked.click();
 
     const addToCart = await page.$("button.add-button");

@@ -1,6 +1,8 @@
 import * as process from "node:process";
+import OpenAI from "openai";
+import ChatCompletionTool = OpenAI.ChatCompletionTool;
 
-const schema = {
+const schema: ChatCompletionTool = {
   type: "function",
   function: {
     name: "get_current_weather",
