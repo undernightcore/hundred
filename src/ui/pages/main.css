@@ -11,5 +11,19 @@
 
     & .main__functions {
         height: 100%;
+
+        & .main__functions__list {
+            display: flex;
+            gap: 12px;
+
+            & > div {
+                border: 4px solid white;
+                padding: 12px;
+
+                & > h4 {
+                    margin: 0;
+                }
+            }
+        }
     }
 }

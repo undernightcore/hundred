@@ -4,5 +4,6 @@
 import { contextBridge, ipcRenderer } from "electron";
 
 contextBridge.exposeInMainWorld('functions', {
-    prompt: (audio: Blob) => ipcRenderer.invoke('prompt', audio)
+    prompt: (audio: Blob) => ipcRenderer.invoke('prompt', audio),
+    getAll: () => ipcRenderer.invoke('getAll')
 })

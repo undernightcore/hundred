@@ -1,7 +1,7 @@
 import { getWeatherTool } from "../tools/weather";
 import { getHundredTool } from "../tools/hundred";
 
-const tools = {
+export const tools = {
   get_current_weather: getWeatherTool,
   order_burgers: getHundredTool,
 };

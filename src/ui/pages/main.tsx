@@ -5,9 +5,13 @@ import { Button } from "../components/button/button";
 export function Main() {
   const [recorder, setRecorder] = useState<MediaRecorder>();
   const [recording, setRecording] = useState(false);
+  const [tools, setTools] = useState<{ name: string; description: string }[]>(
+    [],
+  );
 
   useEffect(() => {
     getStream();
+    getTools();
   }, []);
 
   async function getStream() {
@@ -16,9 +20,13 @@ export function Main() {
     });
 
     const mediaRecorder = new MediaRecorder(stream, { mimeType: "audio/webm" });
-    mediaRecorder.ondataavailable = submitAudio
+    mediaRecorder.ondataavailable = submitAudio;
 
     setRecorder(mediaRecorder);
+  }
+
+  async function getTools() {
+    setTools(await window.functions.getAll())
   }
 
   async function submitAudio(event: BlobEvent) {
@@ -51,7 +59,12 @@ export function Main() {
         <h3 className="main__functions__description">
           Herramientas disponibles
         </h3>
-        <span></span>
+        <div className="main__functions__list">
+          {tools.map((tool) => <div>
+            <h4>{ tool.name }</h4>
+            <span>{ tool.description }</span>
+          </div>)}
+        </div>
       </div>
       <Button
         onClick={() => (recording ? stopRecording() : startRecording())}
