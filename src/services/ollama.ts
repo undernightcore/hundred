@@ -1,14 +1,16 @@
-export async function inferFromLLM(prompt: string, raw: boolean) {
+export async function inferFromLLM(
+  prompt: string,
+  raw: boolean,
+  model: string,
+) {
   const response = await fetch("http://localhost:11434/api/generate", {
     method: "POST",
     body: JSON.stringify({
-      model: "mistral",
+      model,
       stream: false,
       prompt,
       raw,
-      options: {
-        temperature: 1
-      }
+      keep_alive: '60m'
     }),
   });
 

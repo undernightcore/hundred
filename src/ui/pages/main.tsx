@@ -23,8 +23,10 @@ export function Main() {
 
   async function submitAudio(event: BlobEvent) {
     const audio = await event.data.arrayBuffer();
-    const data = await window.functions.prompt(audio);
-    console.log(data)
+    const response = await window.functions.prompt(audio);
+
+    const message = new SpeechSynthesisUtterance(response);
+    speechSynthesis.speak(message);
   }
 
   async function startRecording() {
