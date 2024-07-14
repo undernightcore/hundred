@@ -1,9 +1,8 @@
 import { app, BrowserWindow, ipcMain } from "electron";
 import { transcribeAudio } from "./services/whisper";
-import { inferFromLlama, inferFromMistral } from "./services/ollama";
 import { executeFunction, tools } from "./helpers/tools";
 import { configDotenv } from "dotenv";
-import { inferFromOpenAI } from "./services/openai";
+import { getFunctionCall, getLLMResponse } from "./services/ollama";
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
@@ -46,17 +45,20 @@ ipcMain.handle("prompt", async (_, audio: ArrayBuffer) => {
   const transcription = await transcribeAudio(audio);
   console.log(transcription);
 
-  const toolCall = await inferFromOpenAI(transcription);
-  console.log(JSON.stringify(toolCall, null, 2));
+  const toolCall = await getFunctionCall(transcription);
+  const args = JSON.parse(toolCall.arguments);
+  console.log(args)
 
   const tool = await executeFunction(
-    toolCall.name as keyof typeof tools,
-    toolCall.arguments,
+    toolCall.name,
+    args,
   );
+  if (!tool) return "Lo siento, no se como hacer eso.";
+
   const cookedResponse = tool(transcription);
   console.log(cookedResponse);
 
-  const response = await inferFromLlama(cookedResponse);
+  const response = await getLLMResponse(cookedResponse);
   console.log(response);
 
   return response;
@@ -64,7 +66,7 @@ ipcMain.handle("prompt", async (_, audio: ArrayBuffer) => {
 
 ipcMain.handle("getAll", () =>
   Object.values(tools).map((tool) => ({
-    name: tool.schema.function.name,
-    description: tool.schema.function.description,
+    name: tool.schema.name,
+    description: tool.schema.description,
   })),
 );

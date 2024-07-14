@@ -1,34 +1,31 @@
-import {parseMistralToolCall, prepareMistralToolPrompt} from "../helpers/tools";
+import { tools } from "../helpers/tools";
+import { OllamaFunctions } from "@langchain/community/experimental/chat_models/ollama_functions";
+import { HumanMessage } from "@langchain/core/messages";
+import { Ollama } from "@langchain/community/llms/ollama";
 
-export async function inferFromMistral(
-  prompt: string,
-) {
-  const response = await fetch("http://localhost:11434/api/generate", {
-    method: "POST",
-    body: JSON.stringify({
-      model: 'mistral',
-      stream: false,
-      prompt: prepareMistralToolPrompt(prompt),
-      raw: true,
+const functionModel = new OllamaFunctions({
+  temperature: 0.1,
+  model: "gemma2",
+}).bind({
+  functions: Object.values(tools).map((tool) => tool.schema),
+});
+
+const chatModel = new Ollama({ model: "gemma2" });
+
+export async function getFunctionCall(prompt: string) {
+  const response = await functionModel.invoke([
+    new HumanMessage({
+      content: prompt,
     }),
-  });
+  ]);
 
-  const result: { response: string } = await response.json();
-  return parseMistralToolCall(result.response);
+  return response.additional_kwargs.function_call;
 }
 
-export async function inferFromLlama (
-    prompt: string,
-) {
-  const response = await fetch("http://localhost:11434/api/generate", {
-    method: "POST",
-    body: JSON.stringify({
-      model: 'llama3',
-      stream: false,
-      prompt,
+export function getLLMResponse(prompt: string) {
+  return chatModel.invoke([
+    new HumanMessage({
+      content: prompt,
     }),
-  });
-
-  const result: { response: string } = await response.json();
-  return result.response;
+  ]);
 }

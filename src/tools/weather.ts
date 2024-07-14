@@ -1,29 +1,24 @@
 import * as process from "node:process";
-import OpenAI from "openai";
-import ChatCompletionTool = OpenAI.ChatCompletionTool;
 
-const schema: ChatCompletionTool = {
-  type: "function",
-  function: {
-    name: "get_current_weather",
-    description: "Get the current weather",
-    parameters: {
-      type: "object",
-      properties: {
-        location: {
-          type: "string",
-          description:
+const schema = {
+  name: "get_current_weather",
+  description: "Get the current weather",
+  parameters: {
+    type: "object",
+    properties: {
+      location: {
+        type: "string",
+        description:
             "The city and country, if the country is not present infer from city e.g. Madrid, Spain",
-        },
-        format: {
-          type: "string",
-          enum: ["metric", "imperial"],
-          description:
-            "The unit to use. U.S., Liberia and Myanmar use imperial and the rest metric, ALWAYS infer this from the country or guess",
-        },
       },
-      required: ["location", "format"],
+      format: {
+        type: "string",
+        enum: ["metric", "imperial"],
+        description:
+            "The unit to use. U.S., Liberia and Myanmar use imperial and the rest metric, ALWAYS infer this from the country or guess",
+      },
     },
+    required: ["location", "format"],
   },
 };
 

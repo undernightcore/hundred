@@ -1,63 +1,58 @@
 import { getBrowser } from "../services/puppeteer";
-import OpenAI from "openai";
-import ChatCompletionTool = OpenAI.ChatCompletionTool;
 
-const schema: ChatCompletionTool = {
-  type: "function",
-  function: {
-    name: "order_burgers",
-    description: "Orders a burger to the restaurant 'Hundred'",
-    parameters: {
-      type: "object",
-      properties: {
-        address: {
-          type: "string",
-          description:
-            "Address of the user and the street number but without the door/puerta number",
-        },
-        doorNumber: {
-          type: "number",
-          description: "The door number of the user",
-        },
-        burgers: {
-          type: "array",
-          description: "List of burgers the user wants",
-          items: {
-            type: "object",
-            properties: {
-              name: {
-                type: "string",
-                enum: [
-                  "Paul Finch",
-                  "Cheeseburger",
-                  "Animal style",
-                  "Leslie Chow",
-                  "Loser",
-                  "Satisfaction",
-                  "Singular",
-                  "Jonny Drama",
-                  "La Madre de Stifler",
-                  "Showdown",
-                ],
-                description: "Name of the burger without anymore information",
-              },
-              cookedLevel: {
-                type: "string",
-                enum: ["Poco hecha", "Al punto", "Muy hecha"],
-                description:
-                  "How cooked wants the user the burger. If not in the options choose the closest one",
-              },
-              amount: {
-                type: "number",
-                description: "Amount of specific burgers the user wants",
-              },
+const schema = {
+  name: "order_burgers",
+  description: "Orders a burger to the restaurant 'Hundred'",
+  parameters: {
+    type: "object",
+    properties: {
+      address: {
+        type: "string",
+        description:
+          "Address of the user and the street number but without the door/puerta number",
+      },
+      doorNumber: {
+        type: "number",
+        description: "The door number of the user",
+      },
+      burgers: {
+        type: "array",
+        description: "List of burgers the user wants",
+        items: {
+          type: "object",
+          properties: {
+            name: {
+              type: "string",
+              enum: [
+                "Paul Finch",
+                "Cheeseburger",
+                "Animal style",
+                "Leslie Chow",
+                "Loser",
+                "Satisfaction",
+                "Singular",
+                "Jonny Drama",
+                "La Madre de Stifler",
+                "Showdown",
+              ],
+              description: "Name of the burger without anymore information",
             },
-            required: ["amount", "cookedLevel", "name"],
+            cookedLevel: {
+              type: "string",
+              enum: ["Poco hecha", "Al punto", "Muy hecha"],
+              description:
+                "How cooked wants the user the burger. If not in the options choose the closest one",
+            },
+            amount: {
+              type: "number",
+              description: "Amount of specific burgers the user wants",
+            },
           },
+          required: ["amount", "cookedLevel", "name"],
         },
       },
-      required: ["name", "address", "amount", "doorNumber"],
     },
+    required: ["name", "address", "amount", "doorNumber"],
   },
 };
 
@@ -107,6 +102,8 @@ const implementation = async (order: ImplementationProps) => {
 
   await page.waitForSelector(".card-title");
 
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+
   const products = await page.$$("h5.card-title");
   const serializedProducts = await Promise.all(
     products.map((product) => product.evaluate((p) => p.textContent)),
@@ -118,8 +115,6 @@ const implementation = async (order: ImplementationProps) => {
     );
 
     if (product === -1) continue;
-
-    await products[product].click();
 
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
